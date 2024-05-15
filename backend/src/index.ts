@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
+// import { signinInput, signupInput } from "@harnoor_singh/medium-common";
 
 //create the main hono app
 const app = new Hono<{
@@ -17,20 +18,30 @@ app.post('/api/v1/signup', async (c) => {
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.json();
   try {
+    const body = await c.req.json();
+    // const { success } = signupInput.safeParse(body);
+    // if (!success) {
+    //   console.log(success);
+    //   c.status(411);
+    //   return c.json({ error: "Inputs not correct" });
+    // }
+
     const user = await prisma.user.create({
       data: {
+        name: body.name,
         email: body.email,
         password: body.password
       }
     })
-    //@ts-ignore
+    console.log(user);
+
     const token = await sign({ id: user.id }, c.env.JWT_SECRET)
     return c.json({
       jwt : token,
     });
   } catch (e) {
+    console.log(e);
     c.status(403);
     return c.json({ error: "error while signing up" });
   }
@@ -42,16 +53,26 @@ app.post('/api/v1/signin', async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = c.req.json();
+  const body = await c.req.json();
+  // const { success } = signinInput.safeParse(body);
+  // if( !success) {
+  //   console.log(success);
+  //   c.status(411);
+  //   return c.json({ error: "Inputs not correct" });
+  // }
+
   const user = await prisma.user.findUnique({
     where: {
-      email: body.email
+      email: body.email,
+      password: body.password
     }
   });
+
   if (!user) {
     c.status(403);
     return c.json({ error: "user not found" });
   }
+
   const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
   return c.json({ jwt });
 })
