@@ -12,7 +12,6 @@ const app = new Hono<{
   }
 }>();
 
-//sign up route
 app.post('/api/v1/signup', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
