@@ -1,0 +1,6 @@
+name = "medium"
+compatibility_date = "2023-12-01"
+
+[vars]
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMTRhMjdiNWEtMjI0Yy00ZjUxLWFmNDEtZWE5YzcwNThmMDVjIiwidGVuYW50X2lkIjoiOGJmZTE3NTUwZDU2MTViMjQ4MmU3MWIxOWIwMDhmNjY5OGEzZGIyYzBhOTU1MDg5M2RhZTA0MjIwYjYyNmQyNyIsImludGVybmFsX3NlY3JldCI6IjcyNTg5ZmFlLTc0MmEtNDFlMi1iNTAyLTUyMTVlNjNjMzA4YSJ9.VQm65mcAuU8Q1bhPhY1StVe0L3AWUZXJBGbvxlfL_o0"
+JWT_SECRET="secret"
