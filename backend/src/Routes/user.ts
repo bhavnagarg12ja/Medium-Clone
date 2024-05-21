@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
-import { signupInput} from '@bhavnagarg/medium-common'
+import { signinInput, signupInput } from '@bhavnagarg12ja/medium-common'
+
 export const userRouter = new Hono<{
     Bindings: {
         DATABASE_URL: string,
@@ -24,7 +25,6 @@ userRouter.post('/signup', async (c) => {
         c.status(411);
         return c.json({ error: "Inputs not correct" });
       }
-   
       const user = await prisma.user.create({
         data: {
           name: body.name,
@@ -33,7 +33,6 @@ userRouter.post('/signup', async (c) => {
         }
       })
       console.log(user);
-  
       const token = await sign({ id: user.id }, c.env.JWT_SECRET)
       return c.json({
         jwt : token,
@@ -52,12 +51,12 @@ userRouter.post('/signup', async (c) => {
     }).$extends(withAccelerate());
   
     const body = await c.req.json();
-    // const { success } = signinInput.safeParse(body);
-    // if( !success) {
-    //   console.log(success);
-    //   c.status(411);
-    //   return c.json({ error: "Inputs not correct" });
-    // }
+    const { success } = signinInput.safeParse(body);
+    if( !success) {
+      console.log(success);
+      c.status(411);
+      return c.json({ error: "Inputs not correct" });
+    }
   
     const user = await prisma.user.findUnique({
       where: {
@@ -70,7 +69,8 @@ userRouter.post('/signup', async (c) => {
       c.status(403);
       return c.json({ error: "user not found" });
     }
-  
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
     return c.json({ jwt });
-  })
+  });
+
+  export default userRouter;
